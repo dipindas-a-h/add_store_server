@@ -3,86 +3,47 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 // import { PrismaService } from 'src/prismaService/prisma.service';
 import { PrismaClient } from '@prisma/client';
+import { JwtService } from 'src/JWT/jwt.service';
+import { error } from 'console';
 
 @Injectable()
 export class UsersService {
-
   // constructor(private readonly prisma : PrismaService) {}
-  constructor(private readonly prisma: PrismaClient) { }
+  constructor(
+    private readonly prisma: PrismaClient,
+    private readonly jwtService: JwtService,
+  ) {}
+  // constructor(private readonly jwtService: JwtService) {}
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
+    try {
+      console.log('constructor', createUserDto);
 
-    // console.log("constructor",createUserDto);
+      const { password } = createUserDto;
+      const Ctoken = this.jwtService.generateToken({ password });
 
-    const { username, password } = createUserDto;
-    console.log("uuu", username, password, createUserDto);
+      console.log('token', Ctoken, createUserDto.interests);
 
+      const newUser = await this.prisma.user.create({
+        data: {
+          username: createUserDto.username,
+          
+          passToken : Ctoken,
+          email: createUserDto.email,
+          profilePicture: createUserDto.profile_picture,
+          registrationDate: createUserDto.registration_time,
+          age: parseInt(createUserDto.age),
+          bio: createUserDto.bio,
+          location: createUserDto.location,
+          interests: createUserDto.intrest,
+        },
+      });
 
-    const newUser = this.prisma.user.create({
-      data: {
-        username,
-        password
+      return newUser;
+    } catch (error) {
+      console.error('create error', error);
 
-      },
-    });
-
-    return newUser;
-  }
-
-
-  async login(loginDto: CreateUserDto) {
-    const checkUser = await this.prisma.user.findUnique({
-      where: {
-        username: loginDto.username
-      },
-    });
-  
-    if (checkUser && checkUser.password === loginDto.password) {
-      return {
-        "message" : true,
-        "status": 200,
-        "data":checkUser  
-
-      };
-    } else {
-      // Handle the case when the user is not found, e.g., throw an error or return an appropriate response.
-      // throw new Error('User not found');
-      return {"message" : false , "status" : 200 }
+      return error;
     }
-  }
-
-  findAll() {
-    const allUsers = this.prisma.user.findMany()
-    console.log("all users", allUsers);
-
-    return allUsers;
-  }
-
-  findOne(id: number) {
-    const getOne = this.prisma.user.findUnique({
-      where: {
-        id: id
-      },
-    });
-    return getOne;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    console.log(" updatedto", updateUserDto, id);
-
-    const update = this.prisma.user.update({
-      where: { id: id },
-      data: updateUserDto,
-    });
-
-    return update;
-  }
-
-  remove(id: number) {
-    const Delete = this.prisma.user.delete({
-      where: { id: id },
-
-    })
-    return Delete;
   }
 }

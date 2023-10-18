@@ -12,30 +12,30 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Post('/login')
-  login(@Body() loginDto: CreateUserDto){
-    return this.usersService.login(loginDto)
-  }
+  // @Post('/login')
+  // login(@Body() loginDto: CreateUserDto){
+  //   return this.usersService.login(loginDto)
+  // }
 
 
-  @Get('/allusers')
-  findAll() {
-    return this.usersService.findAll();
-  }
+  // @Get('/allusers')
+  // findAll() {
+  //   return this.usersService.findAll();
+  // }
 
-  @Get('/findOne/:id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
+  // @Get('/findOne/:id')
+  // findOne(@Param('id') id: string) {
+  //   return this.usersService.findOne(+id);
+  // }
 
-  @Patch('/update/:id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  // @Patch('/update/:id')
+  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     
-    return this.usersService.update(+id, updateUserDto);
-  }
+  //   return this.usersService.update(+id, updateUserDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.usersService.remove(+id);
+  // }
 }
